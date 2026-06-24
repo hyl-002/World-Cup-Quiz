@@ -13,7 +13,6 @@ const questions = [
 
 let badgeNumber = "";
 let gameTimeLeft = 40;
-let questionTimeLeft = 5;
 let score = 0;
 let questionCount = 0;
 let currentStreak = 0;
@@ -21,7 +20,6 @@ let bestStreak = 0;
 let currentQuestion;
 let questionPool = [];
 let gameTimer = null;
-let questionTimer = null;
 let isPaused = false;
 let hasAnswered = false;
 
@@ -60,16 +58,7 @@ function startGame() {
     }
   }, 100);
 
-  questionTimer = setInterval(() => {
-    if (!isPaused) {
-      questionTimeLeft = Math.max(0, questionTimeLeft - 0.1);
-      document.getElementById("questionTime").textContent = questionTimeLeft.toFixed(1);
-
-      if (questionTimeLeft <= 0) {
-        handleAnswer(null, true);
-      }
-    }
-  }, 100);
+  
 }
 
 function loadNextQuestion() {
@@ -78,13 +67,11 @@ function loadNextQuestion() {
   }
 
   hasAnswered = false;
-  questionTimeLeft = 5;
   questionCount++;
   currentQuestion = questionPool.pop();
 
   document.getElementById("questionNo").textContent = questionCount;
   document.getElementById("questionText").textContent = currentQuestion.question;
-  document.getElementById("questionTime").textContent = "5.0";
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
@@ -151,7 +138,6 @@ function showResult(title, type) {
 
 function endGame() {
   clearInterval(gameTimer);
-  clearInterval(questionTimer);
 
   document.getElementById("resultPopup").classList.add("hidden");
   document.getElementById("game").classList.add("hidden");
