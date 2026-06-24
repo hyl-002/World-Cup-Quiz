@@ -75,27 +75,9 @@ await loadQuestions();
   
 }
 
-function loadNextQuestion() {
-  if (questionPool.length === 0) {
-    questionPool = [...questions].sort(() => Math.random() - 0.5);
-  }
-
-  hasAnswered = false;
-  questionCount++;
-  currentQuestion = questionPool.pop();
-
-  document.getElementById("questionNo").textContent = questionCount;
-  document.getElementById("questionText").textContent = currentQuestion.question;
-
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-
-  currentQuestion.options.forEach((option, index) => {
-    const btn = document.createElement("button");
-    btn.textContent = String.fromCharCode(65 + index) + ". " + option;
-    btn.onclick = () => handleAnswer(index, false);
-    optionsDiv.appendChild(btn);
-  });
+{
+  "success": true,
+  "questions": [...]
 }
 
 function handleAnswer(selectedIndex, isTimeout) {
