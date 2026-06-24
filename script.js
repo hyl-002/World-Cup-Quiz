@@ -135,11 +135,14 @@ String.fromCharCode(65 + selectedIndex) === currentQuestion.answer;
 
 function showResult(title, type) {
   const popupTitle = document.getElementById("popupTitle");
+
   popupTitle.textContent = title;
   popupTitle.className = "result-title " + type;
 
+  const answerIndex = currentQuestion.answer.charCodeAt(0) - 65;
+
   document.getElementById("correctAnswerText").textContent =
-    currentQuestion.options[currentQuestion.answer];
+    currentQuestion.options[answerIndex];
 
   document.getElementById("resultPopup").classList.remove("hidden");
 }
