@@ -13,30 +13,37 @@ let gameTimer = null;
 let isPaused = false;
 let hasAnswered = false;
 
-function showRules() {
+async function showRules() {
   const input = document.getElementById("badgeInput").value.trim();
-
   if (!input) {
-    alert("請先輸入 Badge Number");
+    alert("請輸入 Badge Number");
     return;
   }
-
   badgeNumber = input;
-
-  const playData = JSON.parse(localStorage.getItem("worldcupQuizResults") || "{}");
-  const playerRecords = playData[badgeNumber] || [];
-
-  if (playerRecords.length >= 2) {
-    const bestScore = Math.max(...playerRecords.map(record => record.score));
-
-    alert(
-      "此 Badge Number 已完成 2 次挑戰。\n\n" +
-      "你的最高分為：" + bestScore + " 分。\n\n" +
-      "遊戲開放期內，每個 Badge Number 最多挑戰 2 次。"
+  try {
+    const response = await fetch(
+      API_URL +
+      "?action=checkBadge&badge=" +
+      badgeNumber
     );
-
-    return;
+    const result = await response.json();
+    if (!result.canPlay) {
+      alert(
+        "此 Badge Number 已完成兩次挑戰。\n\n" +
+        "最高分：" + result.bestScore + " 分"
+      );
+      return;
+    }
+    document
+      .getElementById("rulesPopup")
+      .classList.remove("hidden");
   }
+  catch(error) {
+    alert("無法連接伺服器");
+    console.log(error);
+  }
+
+}
 
   document.getElementById("rulesPopup").classList.remove("hidden");
 }
@@ -149,6 +156,7 @@ function showResult(title, type) {
 
 function endGame() {
   clearInterval(gameTimer);
+  submitResult();
 
   saveResult();
 
@@ -195,6 +203,39 @@ async function loadQuestions() {
     alert("無法載入題目");
 
     console.error(error);
+
+  }
+
+}
+async function submitResult() {
+
+  try {
+
+    const response = await fetch(API_URL, {
+
+      method: "POST",
+
+      body: JSON.stringify({
+
+        action: "submitResult",
+
+        badge: badgeNumber,
+
+        score: score
+
+      })
+
+    });
+
+    const result = await response.json();
+
+    console.log(result);
+
+  }
+
+  catch(error) {
+
+    console.log(error);
 
   }
 
