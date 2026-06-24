@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICC 世界杯快問快答</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <section id="landing" class="card">
+      <h1>⚽ ICC 世界杯快問快答</h1>
+      <p>請輸入你的員工 Badge Number 開始挑戰</p>
+      <input id="badgeInput" inputmode="numeric" placeholder="Badge Number" />
+      <button onclick="showRules()">開始挑戰</button>
+    </section>
+
+    <section id="game" class="hidden">
+      <h1>⚽ 世界杯快問快答</h1>
+
+      <div class="top-bar">
+        <div class="status-box">🏆 分數：<span id="score">0</span></div>
+        <div class="status-box">⏰ <span id="gameTime">40.0</span>s</div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-number">第 <span id="questionNo">1</span> 題</div>
+        <div id="questionText" class="question"></div>
+      </div>
+
+      <div id="options" class="options"></div>
+
+      <div class="question-timer">
+        本題剩餘：<span id="questionTime">5.0</span>s
+      </div>
+    </section>
+
+    <section id="end" class="card hidden">
+      <h1>🎉 挑戰完成！</h1>
+      <p>Badge Number：<span id="finalBadge"></span></p>
+      <p>你的分數：</p>
+      <div class="final-score"><span id="finalScore">0</span> 分</div>
+      <p>最高連續答對：<span id="bestStreak">0</span> 題</p>
+      <button onclick="location.reload()">再玩一次</button>
+    </section>
+  </div>
+
+  <div id="rulesPopup" class="popup hidden">
+    <div class="popup-box">
+      <div class="result-title">📋 遊戲規則</div>
+      <p class="rules-text">
+        每局限時 <strong>40 秒</strong><br>
+        每題限時 <strong>5 秒</strong><br>
+        答對 <strong>+1 分</strong><br>
+        答錯或超時不扣分<br>
+        提示時間不計入遊戲時間
+      </p>
+      <button onclick="startGame()">開始遊戲</button>
+    </div>
+  </div>
+
+  <div id="resultPopup" class="popup hidden">
+    <div class="popup-box">
+      <div id="popupTitle" class="result-title"></div>
+      <p>正確答案：</p>
+      <h2 id="correctAnswerText"></h2>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
