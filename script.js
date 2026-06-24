@@ -32,6 +32,22 @@ function showRules() {
   }
 
   badgeNumber = input;
+
+  const playData = JSON.parse(localStorage.getItem("worldcupQuizResults") || "{}");
+  const playerRecords = playData[badgeNumber] || [];
+
+  if (playerRecords.length >= 2) {
+    const bestScore = Math.max(...playerRecords.map(record => record.score));
+
+    alert(
+      "此 Badge Number 已完成 2 次挑戰。\n\n" +
+      "你的最高分為：" + bestScore + " 分。\n\n" +
+      "遊戲開放期內，每個 Badge Number 最多挑戰 2 次。"
+    );
+
+    return;
+  }
+
   document.getElementById("rulesPopup").classList.remove("hidden");
 }
 
@@ -139,11 +155,29 @@ function showResult(title, type) {
 function endGame() {
   clearInterval(gameTimer);
 
-  document.getElementById("resultPopup").classList.add("hidden");
+  saveResult();
+
   document.getElementById("game").classList.add("hidden");
   document.getElementById("end").classList.remove("hidden");
 
   document.getElementById("finalBadge").textContent = badgeNumber;
   document.getElementById("finalScore").textContent = score;
   document.getElementById("bestStreak").textContent = bestStreak;
+}
+function saveResult() {
+  const playData = JSON.parse(localStorage.getItem("worldcupQuizResults") || "{}");
+
+  if (!playData[badgeNumber]) {
+    playData[badgeNumber] = [];
+  }
+
+  if (playData[badgeNumber].length < 2) {
+    playData[badgeNumber].push({
+      score: score,
+      bestStreak: bestStreak,
+      playedAt: new Date().toISOString()
+    });
+  }
+
+  localStorage.setItem("worldcupQuizResults", JSON.stringify(playData));
 }
