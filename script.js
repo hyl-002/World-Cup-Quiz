@@ -1,16 +1,6 @@
-const questions = [
-  { question: "2022年世界杯冠軍係邊隊？", options: ["阿根廷", "法國", "巴西", "德國"], answer: 0 },
-  { question: "2018年世界杯冠軍係邊隊？", options: ["法國", "克羅地亞", "英格蘭", "比利時"], answer: 0 },
-  { question: "世界杯通常幾多年舉辦一次？", options: ["2年", "3年", "4年", "5年"], answer: 2 },
-  { question: "美斯代表邊個國家隊？", options: ["巴西", "阿根廷", "葡萄牙", "西班牙"], answer: 1 },
-  { question: "C朗代表邊個國家隊？", options: ["葡萄牙", "阿根廷", "法國", "意大利"], answer: 0 },
-  { question: "巴西曾經贏過幾多次世界杯？", options: ["3次", "4次", "5次", "6次"], answer: 2 },
-  { question: "第一屆世界杯喺邊一年舉行？", options: ["1926", "1930", "1934", "1938"], answer: 1 },
-  { question: "第一屆世界杯主辦國係邊個？", options: ["巴西", "烏拉圭", "阿根廷", "意大利"], answer: 1 },
-  { question: "2022年世界杯喺邊個國家舉行？", options: ["卡塔爾", "俄羅斯", "巴西", "南非"], answer: 0 },
-  { question: "2010年世界杯冠軍係邊隊？", options: ["荷蘭", "德國", "西班牙", "阿根廷"], answer: 2 }
-];
-
+let questions = [];
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxm4iN2r95Z0mMURErmvas467YXsm8d5jSFZtn2NtAId3nGcFHs3-4CQcoKTEd1J-s/exec";
 let badgeNumber = "";
 let gameTimeLeft = 40;
 let score = 0;
@@ -51,7 +41,8 @@ function showRules() {
   document.getElementById("rulesPopup").classList.remove("hidden");
 }
 
-function startGame() {
+async function startGame() {
+await loadQuestions();
   document.getElementById("landing").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
   document.getElementById("rulesPopup").classList.add("hidden");
@@ -109,7 +100,8 @@ function handleAnswer(selectedIndex, isTimeout) {
     btn.disabled = true;
   });
 
-  const correct = selectedIndex === currentQuestion.answer;
+const correct =
+String.fromCharCode(65 + selectedIndex) === currentQuestion.answer;
 
   if (correct) {
     score++;
@@ -180,4 +172,27 @@ function saveResult() {
   }
 
   localStorage.setItem("worldcupQuizResults", JSON.stringify(playData));
+}
+async function loadQuestions() {
+
+  try {
+
+    const response = await fetch(API_URL);
+
+    const data = await response.json();
+
+    questions = data;
+
+    console.log("成功載入題目：", questions.length);
+
+  }
+
+  catch (error) {
+
+    alert("無法載入題目");
+
+    console.error(error);
+
+  }
+
 }
