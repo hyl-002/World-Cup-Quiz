@@ -113,15 +113,6 @@ button:active {
   opacity: 0.6;
 }
 
-.question-timer {
-  margin-top: 16px;
-  font-size: 18px;
-  font-weight: bold;
-  color: white;
-  background: #163b72;
-  border-radius: 14px;
-  padding: 10px;
-}
 
 .danger {
   color: #e60000;
