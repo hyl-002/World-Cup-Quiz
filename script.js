@@ -51,7 +51,13 @@ async function showRules() {
 }
 
 async function startGame() {
+  showLoading("正在載入題庫...", "請稍候，系統正在準備比賽");
+
   await loadQuestions();
+
+  await startCountdown();
+
+  hideLoading();
 
   if (questions.length === 0) {
     alert("題庫未能載入，請檢查 Google Sheet。");
