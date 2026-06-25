@@ -27,12 +27,16 @@ async function showRules() {
 
   badgeNumber = input;
 
+  showLoading("正在驗證 Badge...", "請稍候，系統正在確認挑戰次數");
+
   try {
     const response = await fetch(
       API_URL + "?action=checkBadge&badge=" + encodeURIComponent(badgeNumber)
     );
 
     const result = await response.json();
+
+    hideLoading();
 
     if (!result.canPlay) {
       alert(
@@ -45,7 +49,8 @@ async function showRules() {
     document.getElementById("rulesPopup").classList.remove("hidden");
 
   } catch (error) {
-    alert("無法連接伺服器");
+    hideLoading();
+    alert("無法連接伺服器，請稍後再試。");
     console.log(error);
   }
 }
@@ -55,14 +60,15 @@ async function startGame() {
 
   await loadQuestions();
 
-  await startCountdown();
-
-  hideLoading();
-
   if (questions.length === 0) {
+    hideLoading();
     alert("題庫未能載入，請檢查 Google Sheet。");
     return;
   }
+
+  await startCountdown();
+
+  hideLoading();
 
   document.getElementById("landing").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
@@ -139,15 +145,18 @@ function loadNextQuestion() {
 
   document.getElementById("questionNo").textContent = questionCount;
   document.getElementById("questionText").textContent = currentQuestion.question;
-const questionImage = document.getElementById("questionImage");
 
-if (currentQuestion.image && currentQuestion.image.trim() !== "") {
-    questionImage.src = currentQuestion.image;
-    questionImage.classList.remove("hidden");
-} else {
-    questionImage.src = "";
-    questionImage.classList.add("hidden");
-}
+  const questionImage = document.getElementById("questionImage");
+
+  if (questionImage) {
+    if (currentQuestion.image && currentQuestion.image.trim() !== "") {
+      questionImage.src = currentQuestion.image;
+      questionImage.classList.remove("hidden");
+    } else {
+      questionImage.src = "";
+      questionImage.classList.add("hidden");
+    }
+  }
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
@@ -250,6 +259,7 @@ async function submitResult() {
     console.log("提交成績失敗：", error);
   }
 }
+
 function showLoading(title = "正在載入題庫...", text = "請稍候，系統正在準備比賽") {
   document.getElementById("loadingTitle").textContent = title;
   document.getElementById("loadingText").textContent = text;
