@@ -244,3 +244,31 @@ async function submitResult() {
     console.log("提交成績失敗：", error);
   }
 }
+function showLoading(title = "正在載入題庫...", text = "請稍候，系統正在準備比賽") {
+  document.getElementById("loadingTitle").textContent = title;
+  document.getElementById("loadingText").textContent = text;
+  document.getElementById("loadingOverlay").classList.remove("hidden");
+}
+
+function hideLoading() {
+  document.getElementById("loadingOverlay").classList.add("hidden");
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function startCountdown() {
+  showLoading("3", "準備開始！");
+
+  await delay(700);
+  showLoading("2", "集中精神！");
+
+  await delay(700);
+  showLoading("1", "準備入波！");
+
+  await delay(700);
+  showLoading("GO!", "開始挑戰！");
+
+  await delay(500);
+}
