@@ -230,3 +230,139 @@ button:active {
   font-size: 16px;
   margin: 0;
 }
+body {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,0.8) 0 8%, transparent 9%),
+    linear-gradient(#78cfff 0%, #bfeeff 42%, #34b85a 43%, #16843a 100%);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.12) 0 40px,
+      rgba(255,255,255,0.04) 40px 80px
+    );
+  clip-path: polygon(0 48%, 100% 43%, 100% 100%, 0 100%);
+  z-index: -1;
+}
+
+body::after {
+  content: "⚽";
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  font-size: 70px;
+  opacity: 0.22;
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+
+.landing-card {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.94);
+  border-radius: 30px;
+  padding: 26px 22px 28px;
+  margin-top: 28px;
+  box-shadow: 0 10px 0 #0f6b2d, 0 18px 30px rgba(0,0,0,0.18);
+  border: 4px solid rgba(255,255,255,0.7);
+}
+
+.landing-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255,213,74,0.35), transparent 35%),
+    radial-gradient(circle at 90% 12%, rgba(47,168,79,0.18) 0 18%, transparent 19%);
+  pointer-events: none;
+}
+
+.landing-badge {
+  position: relative;
+  display: inline-block;
+  background: #163b72;
+  color: #ffd54a;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.landing-hero {
+  position: relative;
+  z-index: 1;
+}
+
+.trophy-icon {
+  font-size: 58px;
+  margin-bottom: 6px;
+  animation: trophyBounce 1.6s ease-in-out infinite;
+}
+
+@keyframes trophyBounce {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+  }
+}
+
+.landing-hero h1 {
+  font-size: 44px;
+  line-height: 1.05;
+  margin: 4px 0 12px;
+  color: #163b72;
+  text-shadow: 0 3px 0 rgba(255,213,74,0.65);
+}
+
+.landing-hero p {
+  font-size: 17px;
+  font-weight: 700;
+  color: #24613a;
+  margin: 0 auto 22px;
+  line-height: 1.5;
+}
+
+.badge-box {
+  position: relative;
+  z-index: 1;
+  background: #f5fbff;
+  border: 3px solid #d6efff;
+  border-radius: 24px;
+  padding: 18px;
+}
+
+.badge-box label {
+  display: block;
+  font-weight: 800;
+  color: #163b72;
+  margin-bottom: 8px;
+}
+
+.badge-box input {
+  background: white;
+  border: 3px solid #163b72;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.05);
+}
+
+.badge-box button {
+  margin-top: 8px;
+  background: linear-gradient(#ffd84f, #ffc928);
+  border: 3px solid #163b72;
+  box-shadow: 0 6px 0 #163b72;
+}
+
+.badge-box button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #163b72;
+}
