@@ -8,12 +8,21 @@
 </head>
 <body>
   <div class="container">
-    <section id="landing" class="card">
-      <h1>⚽ ICC 世界杯快問快答</h1>
-      <p>請輸入你的員工 Badge Number 開始挑戰</p>
-      <input id="badgeInput" inputmode="numeric" placeholder="Badge Number" />
-      <button onclick="showRules()">開始挑戰</button>
-    </section>
+    <section id="landing" class="landing-card">
+  <div class="landing-badge">ICC WORLD CUP CHALLENGE</div>
+
+  <div class="landing-hero">
+    <div class="trophy-icon">🏆</div>
+    <h1>世界杯<br>快問快答</h1>
+    <p>40 秒內答最多題，挑戰你的世界杯知識！</p>
+  </div>
+
+  <div class="badge-box">
+    <label for="badgeInput">請輸入 Badge Number</label>
+    <input id="badgeInput" placeholder="例如：123456" />
+    <button onclick="showRules()">開始挑戰 ⚽</button>
+  </div>
+</section>
 
     <section id="game" class="hidden">
       <h1>⚽ 世界杯快問快答</h1>
