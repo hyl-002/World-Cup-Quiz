@@ -133,6 +133,15 @@ function loadNextQuestion() {
 
   document.getElementById("questionNo").textContent = questionCount;
   document.getElementById("questionText").textContent = currentQuestion.question;
+const questionImage = document.getElementById("questionImage");
+
+if (currentQuestion.image && currentQuestion.image.trim() !== "") {
+    questionImage.src = currentQuestion.image;
+    questionImage.classList.remove("hidden");
+} else {
+    questionImage.src = "";
+    questionImage.classList.add("hidden");
+}
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
