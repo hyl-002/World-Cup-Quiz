@@ -12,6 +12,10 @@ let bestStreak = 0;
 let currentQuestion = null;
 let normalQuestions = [];
 let jcQuestions = [];
+let easyNormalQuestions = [];
+let mediumNormalQuestions = [];
+let easyJcQuestions = [];
+let mediumJcQuestions = [];
 let gameTimer = null;
 let isPaused = false;
 let hasAnswered = false;
@@ -113,29 +117,39 @@ async function loadQuestions() {
 }
 
 function prepareQuestionPools() {
-  normalQuestions = questions
-    .filter(q => String(q.category).toLowerCase() !== "jc")
-    .sort(() => Math.random() - 0.5);
+  const normal = questions.filter(q =>
+    String(q.category).toLowerCase() !== "jc"
+  );
 
-  jcQuestions = questions
-    .filter(q => String(q.category).toLowerCase() === "jc")
-    .sort(() => Math.random() - 0.5);
+  const jc = questions.filter(q =>
+    String(q.category).toLowerCase() === "jc"
+  );
+
+  easyNormalQuestions = shuffleArray(
+    normal.filter(q => String(q.difficulty).toLowerCase() === "easy")
+  );
+
+  mediumNormalQuestions = shuffleArray(
+    normal.filter(q => String(q.difficulty).toLowerCase() !== "easy")
+  );
+
+  easyJcQuestions = shuffleArray(
+    jc.filter(q => String(q.difficulty).toLowerCase() === "easy")
+  );
+
+  mediumJcQuestions = shuffleArray(
+    jc.filter(q => String(q.difficulty).toLowerCase() !== "easy")
+  );
 }
 
 function loadNextQuestion() {
   hasAnswered = false;
   questionCount++;
 
-  if (questionCount % 5 === 0 && jcQuestions.length > 0) {
-    currentQuestion = jcQuestions.pop();
+  if (questionCount % 5 === 0) {
+    currentQuestion = getJcQuestion();
   } else {
-    if (normalQuestions.length === 0) {
-      normalQuestions = questions
-        .filter(q => String(q.category).toLowerCase() !== "jc")
-        .sort(() => Math.random() - 0.5);
-    }
-
-    currentQuestion = normalQuestions.pop();
+    currentQuestion = getNormalQuestion();
   }
 
   if (!currentQuestion) {
@@ -162,13 +176,51 @@ function loadNextQuestion() {
   optionsDiv.innerHTML = "";
 
   currentQuestion.options.forEach((option, index) => {
+    if (!option || String(option).trim() === "") return;
+
     const button = document.createElement("button");
     button.textContent = String.fromCharCode(65 + index) + ". " + option;
     button.onclick = () => handleAnswer(index);
     optionsDiv.appendChild(button);
   });
 }
+function getNormalQuestion() {
+  // 頭4題一定 Easy
+  if (questionCount <= 4) {
+    if (easyNormalQuestions.length > 0) {
+      return easyNormalQuestions.pop();
+    }
+  }
 
+  // 第6題之後 Easy / Normal 混合
+  // 偶數題偏 Easy，奇數題偏 Normal，避免太集中
+  if (questionCount % 2 === 0) {
+    if (easyNormalQuestions.length > 0) return easyNormalQuestions.pop();
+    if (mediumNormalQuestions.length > 0) return mediumNormalQuestions.pop();
+  } else {
+    if (mediumNormalQuestions.length > 0) return mediumNormalQuestions.pop();
+    if (easyNormalQuestions.length > 0) return easyNormalQuestions.pop();
+  }
+
+  return null;
+}
+
+function getJcQuestion() {
+  // JC 題也混合 Easy / Normal
+  if (questionCount <= 10) {
+    if (easyJcQuestions.length > 0) return easyJcQuestions.pop();
+    if (mediumJcQuestions.length > 0) return mediumJcQuestions.pop();
+  } else {
+    if (mediumJcQuestions.length > 0) return mediumJcQuestions.pop();
+    if (easyJcQuestions.length > 0) return easyJcQuestions.pop();
+  }
+
+  return null;
+}
+
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
 function handleAnswer(selectedIndex) {
   if (hasAnswered || gameEnded) return;
 
