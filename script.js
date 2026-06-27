@@ -4,7 +4,7 @@ const API_URL =
 "https://script.google.com/macros/s/AKfycbxm4iN2r95Z0mMURErmvas467YXsm8d5jSFZtn2NtAId3nGcFHs3-4CQcoKTEd1J-s/exec";
 
 let badgeNumber = "";
-let gameTimeLeft = 40;
+let gameTimeLeft = 90;
 let score = 0;
 let questionCount = 0;
 let currentStreak = 0;
