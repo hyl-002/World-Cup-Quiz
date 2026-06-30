@@ -66,6 +66,12 @@ async function showRules() {
 
 async function startGame() {
   showLoading("正在載入題庫...", "請稍候，系統正在準備比賽");
+    const attemptStarted = await startAttempt();
+
+  if (!attemptStarted) {
+    hideLoading();
+    return;
+  }
 
   await loadQuestions();
 
@@ -287,7 +293,31 @@ function endGame() {
 
   gameEnded = true;
   clearInterval(gameTimer);
+async function startAttempt() {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "startAttempt",
+        badge: badgeNumber
+      })
+    });
 
+    const result = await response.json();
+
+    if (!result.success) {
+      alert(result.message || "無法開始挑戰。");
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+    alert("無法連接伺服器，請稍後再試。");
+    console.log(error);
+    return false;
+  }
+}
   submitResult();
 
   document.getElementById("game").classList.add("hidden");
