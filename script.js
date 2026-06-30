@@ -43,10 +43,15 @@ async function showRules() {
     hideLoading();
 
     if (!result.canPlay) {
-      alert(
-        "此 Badge Number 已完成兩次挑戰。\n\n" +
-        "最高分：" + result.bestScore + " 分"
-      );
+      if (result.isAllowed === false) {
+        alert("此 Badge Number 不在參加名單內。");
+      } else {
+        alert(
+          "此 Badge Number 已完成兩次挑戰。\n\n" +
+          "最高分：" + result.bestScore + " 分"
+        );
+      }
+
       return;
     }
 
