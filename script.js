@@ -10,12 +10,12 @@ let questionCount = 0;
 let currentStreak = 0;
 let bestStreak = 0;
 let currentQuestion = null;
-let normalQuestions = [];
-let jcQuestions = [];
+
 let easyNormalQuestions = [];
 let mediumNormalQuestions = [];
 let easyJcQuestions = [];
 let mediumJcQuestions = [];
+
 let gameTimer = null;
 let isPaused = false;
 let hasAnswered = false;
@@ -39,7 +39,6 @@ async function showRules() {
     );
 
     const result = await response.json();
-
     hideLoading();
 
     if (!result.canPlay) {
@@ -51,7 +50,6 @@ async function showRules() {
           "最高分：" + result.bestScore + " 分"
         );
       }
-
       return;
     }
 
@@ -66,7 +64,8 @@ async function showRules() {
 
 async function startGame() {
   showLoading("正在載入題庫...", "請稍候，系統正在準備比賽");
-    const attemptStarted = await startAttempt();
+
+  const attemptStarted = await startAttempt();
 
   if (!attemptStarted) {
     hideLoading();
@@ -82,8 +81,9 @@ async function startGame() {
   }
 
   await startCountdown();
-
   hideLoading();
+
+  resetGameState();
 
   document.getElementById("landing").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
@@ -108,6 +108,47 @@ async function startGame() {
   }, 100);
 }
 
+function resetGameState() {
+  gameTimeLeft = 90;
+  score = 0;
+  questionCount = 0;
+  currentStreak = 0;
+  bestStreak = 0;
+  gameEnded = false;
+  isPaused = false;
+  hasAnswered = false;
+
+  document.getElementById("score").textContent = "0";
+  document.getElementById("gameTime").textContent = "90.0";
+  document.getElementById("gameTime").classList.remove("danger");
+}
+
+async function startAttempt() {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "startAttempt",
+        badge: badgeNumber
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      alert(result.message || "無法開始挑戰。");
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+    alert("無法連接伺服器，請稍後再試。");
+    console.log(error);
+    return false;
+  }
+}
+
 async function loadQuestions() {
   try {
     const response = await fetch(API_URL + "?action=questions");
@@ -129,27 +170,27 @@ async function loadQuestions() {
 
 function prepareQuestionPools() {
   const normal = questions.filter(q =>
-    String(q.category).toLowerCase() !== "jc"
+    String(q.category).toLowerCase().trim() !== "jc"
   );
 
   const jc = questions.filter(q =>
-    String(q.category).toLowerCase() === "jc"
+    String(q.category).toLowerCase().trim() === "jc"
   );
 
   easyNormalQuestions = shuffleArray(
-    normal.filter(q => String(q.difficulty).toLowerCase() === "easy")
+    normal.filter(q => String(q.difficulty).toLowerCase().trim() === "easy")
   );
 
   mediumNormalQuestions = shuffleArray(
-    normal.filter(q => String(q.difficulty).toLowerCase() !== "easy")
+    normal.filter(q => String(q.difficulty).toLowerCase().trim() !== "easy")
   );
 
   easyJcQuestions = shuffleArray(
-    jc.filter(q => String(q.difficulty).toLowerCase() === "easy")
+    jc.filter(q => String(q.difficulty).toLowerCase().trim() === "easy")
   );
 
   mediumJcQuestions = shuffleArray(
-    jc.filter(q => String(q.difficulty).toLowerCase() !== "easy")
+    jc.filter(q => String(q.difficulty).toLowerCase().trim() !== "easy")
   );
 }
 
@@ -174,8 +215,8 @@ function loadNextQuestion() {
   const questionImage = document.getElementById("questionImage");
 
   if (questionImage) {
-    if (currentQuestion.image && currentQuestion.image.trim() !== "") {
-      questionImage.src = currentQuestion.image;
+    if (currentQuestion.image && String(currentQuestion.image).trim() !== "") {
+      questionImage.src = String(currentQuestion.image).trim();
       questionImage.classList.remove("hidden");
     } else {
       questionImage.src = "";
@@ -195,16 +236,12 @@ function loadNextQuestion() {
     optionsDiv.appendChild(button);
   });
 }
+
 function getNormalQuestion() {
-  // 頭4題一定 Easy
   if (questionCount <= 4) {
-    if (easyNormalQuestions.length > 0) {
-      return easyNormalQuestions.pop();
-    }
+    if (easyNormalQuestions.length > 0) return easyNormalQuestions.pop();
   }
 
-  // 第6題之後 Easy / Normal 混合
-  // 偶數題偏 Easy，奇數題偏 Normal，避免太集中
   if (questionCount % 2 === 0) {
     if (easyNormalQuestions.length > 0) return easyNormalQuestions.pop();
     if (mediumNormalQuestions.length > 0) return mediumNormalQuestions.pop();
@@ -217,7 +254,6 @@ function getNormalQuestion() {
 }
 
 function getJcQuestion() {
-  // JC 題也混合 Easy / Normal
   if (questionCount <= 10) {
     if (easyJcQuestions.length > 0) return easyJcQuestions.pop();
     if (mediumJcQuestions.length > 0) return mediumJcQuestions.pop();
@@ -232,6 +268,7 @@ function getJcQuestion() {
 function shuffleArray(array) {
   return array.sort(() => Math.random() - 0.5);
 }
+
 function handleAnswer(selectedIndex) {
   if (hasAnswered || gameEnded) return;
 
@@ -243,7 +280,8 @@ function handleAnswer(selectedIndex) {
   });
 
   const selectedLetter = String.fromCharCode(65 + selectedIndex);
-  const correct = selectedLetter === String(currentQuestion.answer).toUpperCase();
+  const correct =
+    selectedLetter === String(currentQuestion.answer).toUpperCase().trim();
 
   if (correct) {
     score++;
@@ -279,7 +317,7 @@ function showResult(title, type) {
   popupTitle.textContent = title;
   popupTitle.className = "result-title " + type;
 
-  const answerLetter = String(currentQuestion.answer).toUpperCase();
+  const answerLetter = String(currentQuestion.answer).toUpperCase().trim();
   const answerIndex = answerLetter.charCodeAt(0) - 65;
 
   document.getElementById("correctAnswerText").textContent =
@@ -293,31 +331,7 @@ function endGame() {
 
   gameEnded = true;
   clearInterval(gameTimer);
-async function startAttempt() {
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "startAttempt",
-        badge: badgeNumber
-      })
-    });
 
-    const result = await response.json();
-
-    if (!result.success) {
-      alert(result.message || "無法開始挑戰。");
-      return false;
-    }
-
-    return true;
-
-  } catch (error) {
-    alert("無法連接伺服器，請稍後再試。");
-    console.log(error);
-    return false;
-  }
-}
   submitResult();
 
   document.getElementById("game").classList.add("hidden");
@@ -363,15 +377,14 @@ function delay(ms) {
 
 async function startCountdown() {
   showLoading("3", "準備開始！");
-
   await delay(700);
+
   showLoading("2", "集中精神！");
-
   await delay(700);
+
   showLoading("1", "準備入波！");
-
   await delay(700);
-  showLoading("GO!", "開始挑戰！");
 
+  showLoading("GO!", "開始挑戰！");
   await delay(500);
 }
